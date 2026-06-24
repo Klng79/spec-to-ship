@@ -134,8 +134,16 @@ install_skill() {
     local target="$3"
 
     if [[ -d "$target/$skill" ]]; then
-        echo "  ✓ $skill (already installed)"
-        return 0
+        # In update mode, refresh upstream skills (overwrite with latest from
+        # mattpocock). Always skip spec-to-ship and agentic-coding-loop — those
+        # are local repos the user might be actively developing.
+        if [[ "$UPDATE_MODE" == "1" ]] && is_upstream_skill "$skill"; then
+            rm -rf "$target/$skill"
+            echo "  ↻ $skill (refreshing from upstream)"
+        else
+            echo "  ✓ $skill (already installed)"
+            return 0
+        fi
     fi
 
     # Upstream skills come from mattpocock, not from REPO_BASE
@@ -167,6 +175,47 @@ install_skill() {
 }
 
 main() {
+    # Parse command-line flags
+    UPDATE_MODE=0
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --update|-u)
+                UPDATE_MODE=1
+                shift
+                ;;
+            --help|-h)
+                cat <<EOF
+spec-to-ship installer
+
+Usage: install.sh [--update]
+
+Environment variables:
+  SKILLS_DIR    Override target skills directory (auto-detected if unset)
+  UPSTREAM_BASE Override upstream repo URL (default: mattpocock/skills)
+
+Modes:
+  (default)  Idempotent install: skip any skill already present.
+             Safe to re-run; never overwrites anything.
+
+  --update   Refresh the 4 upstream skills (grill-with-docs, to-prd,
+             to-issues, tdd) from latest mattpocock. Always skips
+             spec-to-ship and agentic-coding-loop — those are your
+             own repos and won't be touched.
+
+Examples:
+  curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash -s -- --update
+  SKILLS_DIR=~/.my-agent/skills ./install.sh --update
+EOF
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1 (use --help for usage)" >&2
+                exit 1
+                ;;
+        esac
+    done
+
     local target
     target=$(detect_target)
 
@@ -177,6 +226,11 @@ main() {
     echo "Target directory: $target"
     echo "Repository base:  $REPO_BASE"
     echo "Upstream skills:  $UPSTREAM_REPO (skills/engineering)"
+    if [[ "$UPDATE_MODE" == "1" ]]; then
+        echo "Mode:             --update (refresh upstream skills)"
+    else
+        echo "Mode:             default (skip existing)"
+    fi
     echo ""
 
     if ! command -v git >/dev/null 2>&1; then

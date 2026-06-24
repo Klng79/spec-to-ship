@@ -200,6 +200,18 @@ The installer:
 3. Optionally installs `/agentic-coding-loop` as a Phase 4 repair fallback
 4. Reports what was installed where
 
+### Updating to the latest upstream skills
+
+By default the installer is **idempotent** — re-running it does nothing because all skills are already present. To pull the latest version of the 4 mattpocock sub-skills (without touching your spec-to-ship or agentic-coding-loop):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash -s -- --update
+```
+
+In `--update` mode:
+- The 4 upstream skills (`grill-with-docs`, `to-prd`, `to-issues`, `tdd`) are deleted and re-fetched from mattpocock/skills at the latest commit
+- `spec-to-ship` and `agentic-coding-loop` are **always preserved** (your own work, never overwritten)
+
 ### Custom skills directory
 
 If your agent uses a non-standard path, set `SKILLS_DIR` before running:
