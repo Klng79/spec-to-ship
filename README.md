@@ -184,17 +184,34 @@ Spec to Ship works with any AI agent that supports:
 
 No specific CLI required. Tested with Qwen Code.
 
-## Requirements
+## Installation
 
-This skill orchestrates 5 sub-skills. Each must be installed separately:
+### 1. Install spec-to-ship
 
-- `/grill-with-docs`
-- `/to-prd`
-- `/to-issues`
-- `/tdd`
-- `/agentic-coding-loop`
+```bash
+git clone https://github.com/Klng79/spec-to-ship.git ~/.qwen/skills/spec-to-ship
+```
 
-If any sub-skill is missing, Phase 4 (or whichever phase calls it) will fail with a clear "skill not found" error.
+### 2. Install required sub-skills
+
+Spec to Ship orchestrates 4 required sub-skills. Each must be cloned into your skills directory:
+
+```bash
+git clone https://github.com/Klng79/grill-with-docs.git ~/.qwen/skills/grill-with-docs
+git clone https://github.com/Klng79/to-prd.git        ~/.qwen/skills/to-prd
+git clone https://github.com/Klng79/to-issues.git     ~/.qwen/skills/to-issues
+git clone https://github.com/Klng79/tdd.git           ~/.qwen/skills/tdd
+```
+
+### 3. Install optional sub-skills
+
+[`/agentic-coding-loop`](https://github.com/Klng79/agentic-coding-loop) is used as a conditional repair fallback in Phase 4. Install it if you want automatic recovery when `/tdd` hits a wall:
+
+```bash
+git clone https://github.com/Klng79/agentic-coding-loop.git ~/.qwen/skills/agentic-coding-loop
+```
+
+If any required sub-skill is missing, the phase that calls it will fail with a clear "skill not found" error.
 
 ## License
 
