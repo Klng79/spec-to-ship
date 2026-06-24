@@ -76,7 +76,11 @@ is_upstream_skill() {
     return 1
 }
 
-# Install a skill sourced from mattpocock/skills via sparse-checkout
+# Install a skill sourced from mattpocock/skills via sparse-checkout.
+# Also copies the upstream LICENSE into the installed sub-skill directory
+# (renamed LICENSE-MATTPOCOCK) so MIT attribution is preserved per the
+# license terms: "The above copyright notice and this permission notice
+# shall be included in all copies or substantial portions of the Software."
 install_upstream_skill() {
     local skill="$1"
     local target="$2"
@@ -97,7 +101,11 @@ install_upstream_skill() {
         return 1
     fi
 
-    if ! (cd "$tmp/repo" && git sparse-checkout set "${UPSTREAM_PATH}/$skill") >/dev/null 2>&1; then
+    # Pull both the skill directory AND the upstream LICENSE so we can
+    # preserve MIT attribution alongside the copied skill files.
+    # --no-cone: LICENSE is a file at the repo root, not a directory under
+    # the skills/ tree, so cone mode (the default) rejects it.
+    if ! (cd "$tmp/repo" && git sparse-checkout set --no-cone "${UPSTREAM_PATH}/$skill" "LICENSE") >/dev/null 2>&1; then
         echo "  ✗ $skill (sparse-checkout for ${UPSTREAM_PATH}/$skill failed)"
         return 1
     fi
@@ -109,6 +117,13 @@ install_upstream_skill() {
 
     mkdir -p "$target/$skill"
     cp -R "$tmp/repo/${UPSTREAM_PATH}/$skill/." "$target/$skill/"
+
+    # Preserve MIT attribution: copy upstream LICENSE into the installed
+    # sub-skill directory so redistribution stays license-compliant.
+    if [[ -f "$tmp/repo/LICENSE" ]]; then
+        cp "$tmp/repo/LICENSE" "$target/$skill/LICENSE-MATTPOCOCK"
+    fi
+
     echo "  ✓ $skill (from mattpocock/skills)"
 }
 

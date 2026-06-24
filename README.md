@@ -254,6 +254,8 @@ The 4 required sub-skills ([`grill-with-docs`](https://github.com/mattpocock/ski
 - No maintenance burden of syncing forks
 - MIT license + attribution to Matt Pocock preserved
 
+Each installed sub-skill directory contains a `LICENSE-MATTPOCOCK` file alongside the skill files, preserving the upstream MIT copyright notice and license text. Per MIT terms, the copyright notice must be included with all substantial copies of the Software.
+
 If you want to customize a sub-skill, fork it on your own GitHub and use `UPSTREAM_BASE` to override the source for those 4 skills:
 
 ```bash
