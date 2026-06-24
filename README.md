@@ -215,19 +215,52 @@ If you prefer to clone each skill manually:
 ```bash
 SKILLS=~/.qwen/skills   # or your agent's skills directory
 
+# spec-to-ship (this repo)
 git clone https://github.com/Klng79/spec-to-ship.git        $SKILLS/spec-to-ship
-git clone https://github.com/Klng79/grill-with-docs.git     $SKILLS/grill-with-docs
-git clone https://github.com/Klng79/to-prd.git              $SKILLS/to-prd
-git clone https://github.com/Klng79/to-issues.git           $SKILLS/to-issues
-git clone https://github.com/Klng79/tdd.git                 $SKILLS/tdd
+
+# Sub-skills sourced from mattpocock/skills (MIT licensed)
+git clone https://github.com/mattpocock/skills.git          /tmp/mp-skills
+cd /tmp/mp-skills
+git sparse-checkout set --cone skills/engineering/grill-with-docs skills/engineering/to-prd skills/engineering/to-issues skills/engineering/tdd
+cp -R skills/engineering/grill-with-docs $SKILLS/
+cp -R skills/engineering/to-prd         $SKILLS/
+cp -R skills/engineering/to-issues      $SKILLS/
+cp -R skills/engineering/tdd            $SKILLS/
+cd - && rm -rf /tmp/mp-skills
 
 # Optional: repair fallback for Phase 4
 git clone https://github.com/Klng79/agentic-coding-loop.git $SKILLS/agentic-coding-loop
 ```
 
+Or use mattpocock's official installer for the 4 sub-skills:
+
+```bash
+npx skills@latest add mattpocock/skills
+# Pick: grill-with-docs, to-prd, to-issues, tdd
+# Pick: your AI agent
+```
+
 ### How it works
 
 Skills are just directories containing a `SKILL.md` file. Your AI agent discovers them on next startup by scanning its skills directory. There is nothing Qwen-specific about the skill content — only the *default install path* assumes Qwen Code. The installer detects other agents automatically.
+
+### Sub-skills come from mattpocock/skills
+
+The 4 required sub-skills ([`grill-with-docs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs), [`to-prd`](https://github.com/mattpocock/skills/tree/main/skills/engineering/to-prd), [`to-issues`](https://github.com/mattpocock/skills/tree/main/skills/engineering/to-issues), [`tdd`](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd)) are not maintained by us — they are pulled **directly from mattpocock/skills** (MIT licensed) via sparse-checkout.
+
+**Why?** Matt Pocock maintains these as the canonical versions. Sourcing from upstream means:
+- Spec to Ship always uses the latest version of each sub-skill
+- Bug fixes and improvements from mattpocock flow in automatically on reinstall
+- No maintenance burden of syncing forks
+- MIT license + attribution to Matt Pocock preserved
+
+If you want to customize a sub-skill, fork it on your own GitHub and use `UPSTREAM_BASE` to override the source for those 4 skills:
+
+```bash
+UPSTREAM_BASE=https://github.com/your-org/skills-fork curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
+```
+
+Your fork must keep the same directory structure (`<your-repo>/skills/engineering/<skill>`) so the sparse-checkout paths still resolve.
 
 ### Supported agent paths (auto-detected)
 

@@ -13,13 +13,22 @@ set -euo pipefail
 
 REPO_BASE="${SKILLS_BASE:-https://github.com/Klng79}"
 ORG_NAME="Klng79"
+UPSTREAM_REPO="${UPSTREAM_BASE:-https://github.com/mattpocock/skills}"
+UPSTREAM_PATH="skills/engineering"
 
-REQUIRED_SKILLS=(
-    "spec-to-ship"
+# Skills sourced from mattpocock/skills (MIT licensed, official upstream).
+# These are NOT forked into Klng79/ — install.sh pulls the canonical
+# version directly from upstream via sparse-checkout.
+UPSTREAM_SKILLS=(
     "grill-with-docs"
     "to-prd"
     "to-issues"
     "tdd"
+)
+
+REQUIRED_SKILLS=(
+    "spec-to-ship"
+    "${UPSTREAM_SKILLS[@]}"
 )
 
 OPTIONAL_SKILLS=(
@@ -58,6 +67,51 @@ verify_repo() {
     git ls-remote --heads "${REPO_BASE}/$1.git" >/dev/null 2>&1
 }
 
+# Check if a skill is sourced from mattpocock upstream
+is_upstream_skill() {
+    local skill="$1"
+    for s in "${UPSTREAM_SKILLS[@]}"; do
+        [[ "$s" == "$skill" ]] && return 0
+    done
+    return 1
+}
+
+# Install a skill sourced from mattpocock/skills via sparse-checkout
+install_upstream_skill() {
+    local skill="$1"
+    local target="$2"
+
+    if [[ -d "$target/$skill" ]]; then
+        echo "  ✓ $skill (already installed)"
+        return 0
+    fi
+
+    local tmp
+    tmp=$(mktemp -d)
+    trap "rm -rf '$tmp'" RETURN
+
+    echo "  → Installing $skill (from mattpocock/skills)..."
+
+    if ! git clone --depth=1 --filter=blob:none --sparse "$UPSTREAM_REPO" "$tmp/repo" >/dev/null 2>&1; then
+        echo "  ✗ $skill (could not clone $UPSTREAM_REPO)"
+        return 1
+    fi
+
+    if ! (cd "$tmp/repo" && git sparse-checkout set "${UPSTREAM_PATH}/$skill") >/dev/null 2>&1; then
+        echo "  ✗ $skill (sparse-checkout for ${UPSTREAM_PATH}/$skill failed)"
+        return 1
+    fi
+
+    if [[ ! -d "$tmp/repo/${UPSTREAM_PATH}/$skill" ]]; then
+        echo "  ✗ $skill (not found at ${UPSTREAM_PATH}/$skill in upstream)"
+        return 1
+    fi
+
+    mkdir -p "$target/$skill"
+    cp -R "$tmp/repo/${UPSTREAM_PATH}/$skill/." "$target/$skill/"
+    echo "  ✓ $skill (from mattpocock/skills)"
+}
+
 # Install a single skill, idempotently
 install_skill() {
     local skill="$1"
@@ -67,6 +121,12 @@ install_skill() {
     if [[ -d "$target/$skill" ]]; then
         echo "  ✓ $skill (already installed)"
         return 0
+    fi
+
+    # Upstream skills come from mattpocock, not from REPO_BASE
+    if is_upstream_skill "$skill"; then
+        install_upstream_skill "$skill" "$target"
+        return $?
     fi
 
     if ! verify_repo "$skill"; then
@@ -101,6 +161,7 @@ main() {
     echo ""
     echo "Target directory: $target"
     echo "Repository base:  $REPO_BASE"
+    echo "Upstream skills:  $UPSTREAM_REPO (skills/engineering)"
     echo ""
 
     if ! command -v git >/dev/null 2>&1; then
