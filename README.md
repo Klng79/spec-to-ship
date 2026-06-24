@@ -186,32 +186,77 @@ No specific CLI required. Tested with Qwen Code.
 
 ## Installation
 
-### 1. Install spec-to-ship
+Spec to Ship works with **any AI coding agent that loads skills from a directory** — Qwen Code, Claude Code, Codex, Continue, Cursor, or a custom harness.
+
+### Quick install (recommended)
 
 ```bash
-git clone https://github.com/Klng79/spec-to-ship.git ~/.qwen/skills/spec-to-ship
+curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
 ```
 
-### 2. Install required sub-skills
+The installer:
+1. **Auto-detects** your AI agent's skills directory (`~/.qwen/skills/`, `~/.claude/skills/`, `~/.codex/skills/`, `~/.continue/skills/`, or `~/.cursor/skills/`)
+2. Clones spec-to-ship and all 4 required sub-skills into it
+3. Optionally installs `/agentic-coding-loop` as a Phase 4 repair fallback
+4. Reports what was installed where
 
-Spec to Ship orchestrates 4 required sub-skills. Each must be cloned into your skills directory:
+### Custom skills directory
+
+If your agent uses a non-standard path, set `SKILLS_DIR` before running:
 
 ```bash
-git clone https://github.com/Klng79/grill-with-docs.git ~/.qwen/skills/grill-with-docs
-git clone https://github.com/Klng79/to-prd.git        ~/.qwen/skills/to-prd
-git clone https://github.com/Klng79/to-issues.git     ~/.qwen/skills/to-issues
-git clone https://github.com/Klng79/tdd.git           ~/.qwen/skills/tdd
+SKILLS_DIR=~/.my-agent/skills curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
 ```
 
-### 3. Install optional sub-skills
+### Manual install (without the script)
 
-[`/agentic-coding-loop`](https://github.com/Klng79/agentic-coding-loop) is used as a conditional repair fallback in Phase 4. Install it if you want automatic recovery when `/tdd` hits a wall:
+If you prefer to clone each skill manually:
 
 ```bash
-git clone https://github.com/Klng79/agentic-coding-loop.git ~/.qwen/skills/agentic-coding-loop
+SKILLS=~/.qwen/skills   # or your agent's skills directory
+
+git clone https://github.com/Klng79/spec-to-ship.git        $SKILLS/spec-to-ship
+git clone https://github.com/Klng79/grill-with-docs.git     $SKILLS/grill-with-docs
+git clone https://github.com/Klng79/to-prd.git              $SKILLS/to-prd
+git clone https://github.com/Klng79/to-issues.git           $SKILLS/to-issues
+git clone https://github.com/Klng79/tdd.git                 $SKILLS/tdd
+
+# Optional: repair fallback for Phase 4
+git clone https://github.com/Klng79/agentic-coding-loop.git $SKILLS/agentic-coding-loop
 ```
 
-If any required sub-skill is missing, the phase that calls it will fail with a clear "skill not found" error.
+### How it works
+
+Skills are just directories containing a `SKILL.md` file. Your AI agent discovers them on next startup by scanning its skills directory. There is nothing Qwen-specific about the skill content — only the *default install path* assumes Qwen Code. The installer detects other agents automatically.
+
+### Supported agent paths (auto-detected)
+
+| Agent | Skills directory |
+|-------|-----------------|
+| **Qwen Code** | `~/.qwen/skills/` |
+| **Claude Code** | `~/.claude/skills/` |
+| **OpenAI Codex** | `~/.codex/skills/` |
+| **Continue.dev** | `~/.continue/skills/` |
+| **Cursor** | `~/.cursor/skills/` |
+| **Custom** | Set `SKILLS_DIR` env var |
+
+If your agent isn't listed, it almost certainly uses one of these conventions. If it uses something completely different, open an issue and we'll add it.
+
+### Uninstallation
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/uninstall.sh | bash
+```
+
+Removes spec-to-ship and all sub-skills from the auto-detected directory. Override with `SKILLS_DIR` if needed.
+
+### Requirements
+
+- `git` in your `PATH`
+- An AI agent that loads skills from a directory (all major ones do)
+- Network access to `github.com`
+
+Works on macOS, Linux, and Windows (Git Bash or WSL).
 
 ## License
 
