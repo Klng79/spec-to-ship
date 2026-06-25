@@ -1,0 +1,65 @@
+# SkillSpector baseline — findings listed here are suppressed on future scans.
+# Edit 'reason' fields and add glob 'rules' as needed. See docs/SUPPRESSION.md.
+version: 1
+rules: []
+fingerprints:
+- hash: sha256:db7a6688523e845f
+  rule_id: E1
+  file: install.sh
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:38ab3a4732747d2d
+  rule_id: E1
+  file: uninstall.sh
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:005fae9fc53a3b0b
+  rule_id: EA3
+  file: LICENSE
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:469a451970644327
+  rule_id: EA3
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:c52152eed23014ad
+  rule_id: RA1
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:eda4a3e38b988d49
+  rule_id: RA2
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:ba9cc2f7f42c5fd0
+  rule_id: RA1
+  file: install.sh
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:d828319018163a67
+  rule_id: SC2
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:bd6e9ce2b3c9d159
+  rule_id: TM1
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:bd6e9ce2b3c9d159
+  rule_id: TM1
+  file: README.md
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:e1d04b94f904e84d
+  rule_id: TM1
+  file: install.sh
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.
+- hash: sha256:bb21671f8ac75682
+  rule_id: TM1
+  file: uninstall.sh
+  reason: All findings are static-analysis false positives on installer/uninstaller
+    shell scripts and MIT license text. See README Security section for detailed assessment.

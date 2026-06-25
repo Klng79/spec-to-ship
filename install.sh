@@ -2,7 +2,8 @@
 # install.sh — Install spec-to-ship and its sub-skills for any AI agent
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh -o install.sh
+#   bash install.sh
 #   SKILLS_DIR=~/.my-agent/skills ./install.sh
 #
 # Environment variables:
@@ -203,8 +204,9 @@ Modes:
              own repos and won't be touched.
 
 Examples:
-  curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash
-  curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh | bash -s -- --update
+  curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/install.sh -o /tmp/s2s-install.sh
+  bash /tmp/s2s-install.sh
+  bash /tmp/s2s-install.sh --update
   SKILLS_DIR=~/.my-agent/skills ./install.sh --update
 EOF
                 exit 0

@@ -2,7 +2,8 @@
 # uninstall.sh — Remove spec-to-ship and its sub-skills
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/uninstall.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Klng79/spec-to-ship/main/uninstall.sh -o /tmp/s2s-uninstall.sh
+#   bash /tmp/s2s-uninstall.sh
 #   SKILLS_DIR=~/.my-agent/skills ./uninstall.sh
 
 set -euo pipefail
