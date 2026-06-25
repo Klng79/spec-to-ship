@@ -305,6 +305,31 @@ Removes spec-to-ship and all sub-skills from the auto-detected directory. Overri
 
 Works on macOS, Linux, and Windows (Git Bash or WSL).
 
+## Security
+
+This skill has been scanned with [NVIDIA SkillSpector](https://github.com/nvidia/skillspector) — a static security analyzer for AI agent skills.
+
+### Permissions
+
+The `SKILL.md` frontmatter declares a `permissions` field listing the capabilities this skill requires:
+
+| Permission | Reason |
+|-----------|--------|
+| `execute:shell` | `install.sh` / `uninstall.sh` run git and file operations |
+| `invoke:skills` | Orchestrates `grill-with-docs`, `to-prd`, `to-issues`, `tdd`, `agentic-coding-loop` |
+
+### Scan results
+
+| Category | Findings | Assessment |
+|----------|----------|------------|
+| LP3 — Missing permissions | ✅ Resolved | Added `permissions` field to `SKILL.md` |
+| TM1 — Tool Parameter Abuse | 4 | **False positives.** Flags `rm -rf` in `install.sh`/`uninstall.sh` and `--force` in README examples. All `rm -rf` calls are guarded by directory existence checks and use fixed paths from a hardcoded skill list — no user input reaches them. |
+| TM2 — Chaining Abuse | 3 | **False positives.** Flags `set -euo pipefail` and `&&` chains — standard shell best practices, not chaining abuse. |
+| RA1 — Self-Modification | 1 | **False positive.** Flags `install.sh` copying files into the skills directory — this is the installer's intended purpose, not runtime self-modification. |
+| EA3 — Scope Creep | 1 | **False positive.** Matches "NOT LIMITED TO" in the MIT license text. |
+
+The remaining findings are inherent to SkillSpector's static analysis of shell-based installers — the analyzer pattern-matches on `rm -rf`, `&&`, and `pipefail` without understanding installer context or path guards.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

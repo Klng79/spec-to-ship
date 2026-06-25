@@ -1,6 +1,9 @@
 ---
 name: spec-to-ship
 description: Full lifecycle playbook — grill a vague idea into a sharp spec, produce a PRD, break it into vertical-slice issues, then implement each issue test-first via /tdd, with /agentic-coding-loop as a conditional repair fallback. Orchestrates /grill-with-docs, /to-prd, /to-issues, /tdd, and /agentic-coding-loop as sub-phases. Use when the user wants to go from idea to shipped code end-to-end, or invokes this skill directly.
+permissions:
+  - execute:shell     # install.sh / uninstall.sh run git and file operations
+  - invoke:skills     # Orchestrates grill-with-docs, to-prd, to-issues, tdd, agentic-coding-loop
 ---
 
 # Spec to Ship
